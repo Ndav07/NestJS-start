@@ -1,4 +1,6 @@
 import { Injectable, NotAcceptableException } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 
 import { ICreatePlayerDTO } from './dtos/create-player.dto'
@@ -7,6 +9,10 @@ import { IPlayer } from './interfaces/player.interface'
 @Injectable()
 export class PlayersService {
   private players = []
+
+  constructor(
+    @InjectModel('Player') private readonly playerModel: Model<IPlayer>
+  ) {}
 
   async getPlayers(): Promise<IPlayer[]> {
     return this.players
