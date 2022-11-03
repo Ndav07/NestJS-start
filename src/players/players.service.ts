@@ -1,64 +1,50 @@
 import { Injectable, NotAcceptableException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { v4 as uuidv4 } from 'uuid'
 
 import { ICreatePlayerDTO } from './dtos/create-player.dto'
 import { IPlayer } from './interfaces/player.interface'
 
 @Injectable()
 export class PlayersService {
-  private players = []
-
   constructor(
     @InjectModel('Player') private readonly playerModel: Model<IPlayer>
   ) {}
 
   async getPlayers(): Promise<IPlayer[]> {
-    return this.players
+    return await this.playerModel.find().exec()
   }
 
   async getPlayer(email: string): Promise<IPlayer> {
-    const player = this.players.find((player) => player.email === email)
-    if (!player) {
+    const playerFind = await this.playerModel.findOne({ email }).exec()
+    if (!playerFind) {
       throw new NotAcceptableException('Player does not exists!')
     }
-    return player
+    return playerFind
   }
 
   async createUpdatePlayer(playerDTO: ICreatePlayerDTO): Promise<void> {
     const { email } = playerDTO
-    const player = this.players.find((player) => player.email === email)
-    if (player) {
-      this.updatePlayer(player, playerDTO)
+    const playerFind = await this.playerModel.findOne({ email }).exec()
+    if (playerFind) {
+      this.updatePlayer(playerDTO)
     } else {
       this.createPlayer(playerDTO)
     }
   }
 
   async deletePlayer(email: string): Promise<void> {
-    const playerFind = this.players.find((player) => player.email === email)
-    this.players = this.players.filter(
-      (player) => player.email !== playerFind.email
-    )
+    await this.playerModel.deleteOne({ email }).exec()
   }
 
-  private createPlayer(playerDTO: ICreatePlayerDTO): void {
-    const { name, email, phoneNumber } = playerDTO
-    const player: IPlayer = {
-      id: uuidv4(),
-      name: name,
-      phoneNumber: phoneNumber,
-      email: email,
-      ranking: 'A',
-      positionRanking: 1,
-      urlPhotoPlayer: 'www.google.com.br/photo123.jpg',
-    }
-    this.players.push(player)
+  private async createPlayer(playerDTO: ICreatePlayerDTO): Promise<IPlayer> {
+    const playerCreate = new this.playerModel(playerDTO)
+    return await playerCreate.save()
   }
 
-  private updatePlayer(playerFind: IPlayer, playerDTO: ICreatePlayerDTO): void {
-    const { name } = playerDTO
-    playerFind.name = name
+  private async updatePlayer(playerDTO: ICreatePlayerDTO): Promise<IPlayer> {
+    return await this.playerModel
+      .findOneAndUpdate({ email: playerDTO.email }, { $set: playerDTO })
+      .exec()
   }
 }
