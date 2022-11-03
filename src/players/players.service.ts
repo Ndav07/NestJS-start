@@ -30,6 +30,13 @@ export class PlayersService {
     }
   }
 
+  async deletePlayer(email: string): Promise<void> {
+    const playerFind = this.players.find((player) => player.email === email)
+    this.players = this.players.filter(
+      (player) => player.email !== playerFind.email
+    )
+  }
+
   private createPlayer(playerDTO: ICreatePlayerDTO): void {
     const { name, email, phoneNumber } = playerDTO
     const player: IPlayer = {
