@@ -3,39 +3,52 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
+  Param,
   Post,
-  Query,
+  Put,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common'
 
-import { ICreatePlayerDTO } from './dtos/create-player.dto'
-import { IPlayer } from './interfaces/player.interface'
 import { PlayersService } from './players.service'
+import { CreatePlayerDTO } from './dtos/create-player.dto'
+import { IPlayer } from './interfaces/player.interface'
+import { PlayersValidationParams } from './pipes/players-validation-params.pipe'
 
 @Controller('players')
 export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
   @Post()
-  async createUpdatePlayer(@Body() player: ICreatePlayerDTO): Promise<void> {
-    if (!player.email || !player.name || !player.phoneNumber) {
-      throw new HttpException('Does not have the necessary parameters', 400)
-    }
-    this.playersService.createUpdatePlayer(player)
+  @UsePipes(ValidationPipe)
+  async createPlayer(@Body() player: CreatePlayerDTO): Promise<IPlayer> {
+    return this.playersService.createPlayer(player)
+  }
+
+  @Put('/:id')
+  @UsePipes(ValidationPipe)
+  async updatePlayer(
+    @Body() player: CreatePlayerDTO,
+    @Param('id', PlayersValidationParams) id: string
+  ): Promise<IPlayer> {
+    return this.playersService.updatePlayer(id, player)
   }
 
   @Get()
-  async getPlayers(
-    @Query('email') email: string
-  ): Promise<IPlayer | IPlayer[]> {
-    if (email) {
-      return this.playersService.getPlayer(email)
-    } else {
-      return this.playersService.getPlayers()
-    }
+  async getPlayers(): Promise<IPlayer[]> {
+    return this.playersService.getPlayers()
   }
 
-  @Delete()
-  async deletePlayer(@Query('email') email: string): Promise<void> {
-    this.playersService.deletePlayer(email)
+  @Get('/:id')
+  async getPlayer(
+    @Param('id', PlayersValidationParams) id: string
+  ): Promise<IPlayer> {
+    return this.playersService.getPlayer(id)
+  }
+
+  @Delete('/:id')
+  async deletePlayer(
+    @Param('id', PlayersValidationParams) id: string
+  ): Promise<void> {
+    this.playersService.deletePlayer(id)
   }
 }
