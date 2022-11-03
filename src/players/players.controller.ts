@@ -14,6 +14,7 @@ import { PlayersService } from './players.service'
 import { CreatePlayerDTO } from './dtos/create-player.dto'
 import { IPlayer } from './interfaces/player.interface'
 import { PlayersValidationParams } from './pipes/players-validation-params.pipe'
+import { UpdatePlayerDTO } from './dtos/update-player.dto'
 
 @Controller('players')
 export class PlayersController {
@@ -27,7 +28,7 @@ export class PlayersController {
   @Put('/:id')
   @UsePipes(ValidationPipe)
   async updatePlayer(
-    @Body() player: CreatePlayerDTO,
+    @Body() player: UpdatePlayerDTO,
     @Param('id', PlayersValidationParams) id: string
   ): Promise<IPlayer> {
     return this.playersService.updatePlayer(id, player)

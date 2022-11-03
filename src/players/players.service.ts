@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 import { CreatePlayerDTO } from './dtos/create-player.dto'
+import { UpdatePlayerDTO } from './dtos/update-player.dto'
 import { IPlayer } from './interfaces/player.interface'
 
 @Injectable()
@@ -28,7 +29,7 @@ export class PlayersService {
     return await playerCreate.save()
   }
 
-  async updatePlayer(id: string, playerDTO: CreatePlayerDTO): Promise<IPlayer> {
+  async updatePlayer(id: string, playerDTO: UpdatePlayerDTO): Promise<IPlayer> {
     const playerFind = await this.playerModel.findOne({ id }).exec()
     if (!playerFind) {
       throw new NotFoundException('Player does not exists!')
