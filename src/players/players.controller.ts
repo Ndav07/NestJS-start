@@ -31,8 +31,8 @@ export class PlayersController {
   async updatePlayer(
     @Body() player: UpdatePlayerDTO,
     @Param('id', PlayersValidationParams) id: string
-  ): Promise<IPlayer> {
-    return this.playersService.updatePlayer(id, player)
+  ): Promise<void> {
+    await this.playersService.updatePlayer(id, player)
   }
 
   @Get()
@@ -51,6 +51,6 @@ export class PlayersController {
   async deletePlayer(
     @Param('id', PlayersValidationParams) id: string
   ): Promise<void> {
-    this.playersService.deletePlayer(id)
+    await this.playersService.deletePlayer(id)
   }
 }

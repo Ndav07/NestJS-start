@@ -13,5 +13,5 @@ export class CreateCategoryDTO {
 
   @IsArray()
   @ArrayMinSize(1)
-  events: Array<IEvent>
+  events: IEvent[]
 }

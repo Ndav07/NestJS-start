@@ -6,6 +6,6 @@ import { IEvent } from './event.interface'
 export interface ICategory extends Document {
   readonly category: string
   description: string
-  events: Array<IEvent>
-  jogadores: Array<IPlayer>
+  events: IEvent[]
+  jogadores: IPlayer[]
 }

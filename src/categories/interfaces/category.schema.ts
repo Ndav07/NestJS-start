@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose'
 
 export const CategorySchema = new mongoose.Schema(
   {
-    categoty: { type: String, unique: true },
+    category: { type: String, unique: true },
     description: { type: String },
     events: [
       {
@@ -11,7 +11,7 @@ export const CategorySchema = new mongoose.Schema(
         value: { type: Number },
       },
     ],
-    jogadores: [
+    players: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Player',

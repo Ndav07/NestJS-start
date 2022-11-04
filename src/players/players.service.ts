@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
@@ -17,11 +21,13 @@ export class PlayersService {
   }
 
   async getPlayer(id: string): Promise<IPlayer> {
-    const playerFind = await this.playerModel.findOne({ id }).exec()
-    if (!playerFind) {
-      throw new NotFoundException('Player does not exists!')
-    }
-    return playerFind
+    const player = await this.playerModel
+      .findOne({ _id: id })
+      .exec()
+      .catch(() => {
+        throw new NotFoundException(`Player does not exists!`)
+      })
+    return player
   }
 
   async createPlayer(playerDTO: CreatePlayerDTO): Promise<IPlayer> {
@@ -29,21 +35,39 @@ export class PlayersService {
     return await playerCreate.save()
   }
 
-  async updatePlayer(id: string, playerDTO: UpdatePlayerDTO): Promise<IPlayer> {
-    const playerFind = await this.playerModel.findOne({ id }).exec()
-    if (!playerFind) {
-      throw new NotFoundException('Player does not exists!')
-    }
-    return await this.playerModel
-      .findOneAndUpdate({ id }, { $set: playerDTO })
+  async updatePlayer(id: string, playerDTO: UpdatePlayerDTO): Promise<void> {
+    const playerFind = await this.playerModel
+      .findOne({ _id: id })
       .exec()
+      .catch(() => {
+        throw new NotFoundException(`Player does not exists!`)
+      })
+    if (!playerFind) {
+      throw new NotFoundException(`Player does not exists!`)
+    }
+    await this.playerModel
+      .findOneAndUpdate({ _id: id }, { $set: playerDTO })
+      .exec()
+      .catch(() => {
+        throw new NotFoundException(`Application Error!`)
+      })
   }
 
   async deletePlayer(id: string): Promise<void> {
-    const playerFind = await this.playerModel.findOne({ id }).exec()
+    const playerFind = await this.playerModel
+      .findOne({ _id: id })
+      .exec()
+      .catch(() => {
+        throw new NotFoundException(`Player does not exists!`)
+      })
     if (!playerFind) {
-      throw new NotFoundException('Player does not exists!')
+      throw new NotFoundException(`Player does not exists!`)
     }
-    await this.playerModel.deleteOne({ id }).exec()
+    await this.playerModel
+      .findOneAndDelete({ _id: id })
+      .exec()
+      .catch(() => {
+        throw new BadRequestException(`Application Error!`)
+      })
   }
 }
