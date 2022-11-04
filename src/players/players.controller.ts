@@ -19,6 +19,7 @@ import { UpdatePlayerDTO } from './dtos/update-player.dto'
 @Controller('players')
 export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
+
   @Post()
   @UsePipes(ValidationPipe)
   async createPlayer(@Body() player: CreatePlayerDTO): Promise<IPlayer> {
