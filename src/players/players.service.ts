@@ -25,7 +25,7 @@ export class PlayersService {
       .findOne({ _id: id })
       .exec()
       .catch(() => {
-        throw new NotFoundException(`Player does not exists!`)
+        throw new NotFoundException('Player does not exists!')
       })
     return player
   }
@@ -40,16 +40,16 @@ export class PlayersService {
       .findOne({ _id: id })
       .exec()
       .catch(() => {
-        throw new NotFoundException(`Player does not exists!`)
+        throw new NotFoundException('Player does not exists!')
       })
     if (!playerFind) {
-      throw new NotFoundException(`Player does not exists!`)
+      throw new NotFoundException('Player does not exists!')
     }
     await this.playerModel
       .findOneAndUpdate({ _id: id }, { $set: playerDTO })
       .exec()
       .catch(() => {
-        throw new NotFoundException(`Application Error!`)
+        throw new BadRequestException('Application Error!')
       })
   }
 
@@ -58,16 +58,16 @@ export class PlayersService {
       .findOne({ _id: id })
       .exec()
       .catch(() => {
-        throw new NotFoundException(`Player does not exists!`)
+        throw new NotFoundException('Player does not exists!')
       })
     if (!playerFind) {
-      throw new NotFoundException(`Player does not exists!`)
+      throw new NotFoundException('Player does not exists!')
     }
     await this.playerModel
       .findOneAndDelete({ _id: id })
       .exec()
       .catch(() => {
-        throw new BadRequestException(`Application Error!`)
+        throw new BadRequestException('Application Error!')
       })
   }
 }

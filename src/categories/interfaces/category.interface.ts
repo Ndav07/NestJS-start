@@ -7,5 +7,5 @@ export interface ICategory extends Document {
   readonly category: string
   description: string
   events: IEvent[]
-  jogadores: IPlayer[]
+  players: IPlayer[]
 }
