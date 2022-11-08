@@ -98,19 +98,16 @@ export class CategoriesService {
       throw new NotFoundException('Category does not exists!')
     }
 
-    const playersAlreadyRegisteredIntheCategory = await this.categoryModel
-      .find({ _id: idCategory })
-      .where('players')
-      .equals(idPlayer)
-      .exec()
-
-    if (playersAlreadyRegisteredIntheCategory.length > 0) {
-      throw new BadRequestException('Player already registered!')
-    }
-
     const playerFind = await this.playersService.getPlayer(idPlayer)
     if (!playerFind) {
       throw new NotFoundException('Player does not exists!')
+    }
+
+    const playersAlreadyRegisteredIntheCategory = await this.categoryModel
+      .findOne({ _id: idCategory, players: { _id: idPlayer } })
+      .exec()
+    if (playersAlreadyRegisteredIntheCategory) {
+      throw new BadRequestException('Player already registered!')
     }
 
     categoryFind.players.push(idPlayer)
