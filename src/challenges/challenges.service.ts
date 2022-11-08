@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { CategoriesService } from 'src/categories/categories.service'
@@ -18,10 +18,16 @@ export class ChallengesService {
   ) {}
 
   async createChallenge(challenge: CreateChallengeDTO): Promise<void> {
-    const { players } = challenge
+    const { players, requester } = challenge
 
     const playersFind = await this.playersService.getPlayersByIds(players)
 
-    console.log(playersFind)
+    const requesterInGame = playersFind.find(
+      (player) => player._id == requester._id
+    )
+
+    if (!requesterInGame) {
+      throw new BadRequestException('Requester does not in game')
+    }
   }
 }

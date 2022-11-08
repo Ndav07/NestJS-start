@@ -21,20 +21,13 @@ export class PlayersService {
   }
 
   async getPlayersByIds(players: IPlayer[]): Promise<IPlayer[]> {
-    const idPlayers = players.filter((player) => {
-      if (player._id) {
-        return player._id
-      }
-    })
-
-    console.log(idPlayers)
-
     const playersFind = await this.playerModel
-      .find({ _id: { $in: idPlayers } })
+      .find({ _id: players })
       .exec()
       .catch(() => {
         throw new NotFoundException('Players does not exists!')
       })
+
     return playersFind
   }
 
