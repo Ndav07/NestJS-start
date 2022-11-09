@@ -27,7 +27,9 @@ export class PlayersService {
       .catch(() => {
         throw new NotFoundException('Players does not exists!')
       })
-
+    if (!playersFind) {
+      throw new NotFoundException('Players does not exists!')
+    }
     return playersFind
   }
 
@@ -38,6 +40,9 @@ export class PlayersService {
       .catch(() => {
         throw new NotFoundException('Player does not exists!')
       })
+    if (!player) {
+      throw new NotFoundException('Player does not exists!')
+    }
     return player
   }
 

@@ -40,6 +40,22 @@ export class CategoriesService {
       .catch(() => {
         throw new NotFoundException('Category does not exists!')
       })
+    if (!category) {
+      throw new NotFoundException('Category does not exists!')
+    }
+    return category
+  }
+
+  async getCategoryByPlayerId(id: string): Promise<ICategory> {
+    const category = await this.categoryModel
+      .findOne({ players: { _id: id } })
+      .exec()
+      .catch(() => {
+        throw new NotFoundException('Player is not registered in this category')
+      })
+    if (!category) {
+      throw new NotFoundException('Player is not registered in this category')
+    }
     return category
   }
 
